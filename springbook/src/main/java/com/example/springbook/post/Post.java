@@ -22,7 +22,7 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private LocalDateTime localDateTime;
+    private LocalDateTime createDate;
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
     private List<Comment> commentList;

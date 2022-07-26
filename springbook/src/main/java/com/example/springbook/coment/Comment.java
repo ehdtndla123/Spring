@@ -18,7 +18,7 @@ public class Comment {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private LocalDateTime localDateTime;
+    private LocalDateTime createDate;
 
     @ManyToOne
     private Post post;
