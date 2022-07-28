@@ -1,31 +1,49 @@
 package com.example.springbook.post;
 
+import com.example.springbook.coment.CommentForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/dev")
+@RequestMapping("/dev/post")
 @Controller
 public class PostController {
 
     private final PostService postService;
 
 
-    @RequestMapping("/post/list")
+    @RequestMapping("/list")
     public String list(Model model){
         List<Post> postList=this.postService.getList();
         model.addAttribute("postList",postList);
         return "post_list";
     }
-    @RequestMapping("/post/detail/{id}")
-    public String detail(Model model,@PathVariable("id") Integer id){
+    @RequestMapping(value ="/detail/{id}")
+    public String detail(Model model, @PathVariable("id") Integer id, CommentForm commentForm){
         Post post=this.postService.getPost(id);
         model.addAttribute("post",post);
         return "post_detail";
     }
+
+    @GetMapping("/create")
+    public String postCreate(PostForm postForm){
+        return "post_create_form";
+    }
+    @PostMapping("/create")
+    // public String postCreate(@RequestParam String subject,@RequestParam String content){
+    public String postCreate(@Valid PostForm postForm, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "post_create_form";
+        }
+        this.postService.create(postForm.getSubject(),postForm.getContent());
+        return "redirect:/dev/post/list";
+    }
+
+
 }
