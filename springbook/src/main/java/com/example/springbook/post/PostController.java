@@ -46,5 +46,4 @@ public class PostController {
         return "redirect:/dev/post/list";
     }
 
-
 }
