@@ -4,9 +4,15 @@ import com.example.springbook.DataNotFoundException;
 import com.example.springbook.post.Post;
 import com.example.springbook.user.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -22,7 +28,16 @@ public class CommentService {
             throw new DataNotFoundException("answer not found");
         }
     }
-
+    public Page<Comment> getCommentList(int page,Post post,String order){
+        List<Sort.Order> sorts = new ArrayList<>();
+        if(order.equals("desc")){
+            sorts.add(Sort.Order.desc("createDate"));
+        }else if(order.equals("like")){
+            sorts.add(Sort.Order.by("createDate"));
+        }
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.commentRepository.findAllByPost(post,pageable);
+    }
     public Comment create(Post post, String content, SiteUser author){
         Comment comment=new Comment();
         comment.setCreateDate(LocalDateTime.now());

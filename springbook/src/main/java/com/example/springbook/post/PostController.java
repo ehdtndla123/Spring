@@ -1,6 +1,8 @@
 package com.example.springbook.post;
 
+import com.example.springbook.coment.Comment;
 import com.example.springbook.coment.CommentForm;
+import com.example.springbook.coment.CommentService;
 import com.example.springbook.user.SiteUser;
 import com.example.springbook.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +26,34 @@ public class PostController {
 
     private final PostService postService;
     private final UserService userService;
+    private final CommentService commentService;
 
 
     @RequestMapping("/list")
-    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page){
-        Page<Post> paging=this.postService.getList(page);
+    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page
+    ,@RequestParam(value = "kw", defaultValue = "") String kw){
+        Page<Post> paging=this.postService.getList(page,kw);
         model.addAttribute("paging",paging);
+        model.addAttribute("kw",kw);
         return "post_list";
     }
+    /*
     @RequestMapping(value ="/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id, CommentForm commentForm){
         Post post=this.postService.getPost(id);
         model.addAttribute("post",post);
+        return "post_detail";
+    }
+     */
+    @RequestMapping("/detail/{id}")
+    public String detail(Model model,@PathVariable("id") Integer id,@RequestParam(value="page",defaultValue = "0") int page,CommentForm commentForm,
+                         @RequestParam(value="order",defaultValue = "desc") String order)
+    {
+        Post post=this.postService.getPost(id);
+        Page<Comment> paging=this.commentService.getCommentList(page,post,order);
+        model.addAttribute("post",post);
+        model.addAttribute("paging",paging);
+        model.addAttribute("order",order);
         return "post_detail";
     }
     @PreAuthorize("isAuthenticated()")
