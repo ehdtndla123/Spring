@@ -43,6 +43,7 @@ public class PostService {
         post.setContent(content);
         post.setCreateDate(LocalDateTime.now());
         post.setAuthor(author);
+        post.setViewCount(0L);
         this.postRepository.save(post);
     }
     public void modify(Post post,String subject,String content){
@@ -80,5 +81,11 @@ public class PostService {
                         cb.like(u2.get("username"), "%" + kw + "%"));   // 답변 작성자
             }
         };
+    }
+
+    public void updateViewCount(Post post){
+        Long viewPoint=post.getViewCount()+1L;
+        post.setViewCount(viewPoint);
+        this.postRepository.save(post);
     }
 }

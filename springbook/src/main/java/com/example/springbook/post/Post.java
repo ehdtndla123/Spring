@@ -1,7 +1,9 @@
 package com.example.springbook.post;
 
+import com.example.springbook.category.Category;
 import com.example.springbook.coment.Comment;
 import com.example.springbook.user.SiteUser;
+import jdk.jfr.Unsigned;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +36,11 @@ public class Post {
 
     private LocalDateTime modifyDate;
 
+    @Column(columnDefinition = "0")
+    private Long viewCount;
     @ManyToMany
     Set<SiteUser> voter;
+
+    @ManyToOne
+    private Category category;
 }

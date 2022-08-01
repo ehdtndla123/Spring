@@ -54,6 +54,7 @@ public class PostController {
         model.addAttribute("post",post);
         model.addAttribute("paging",paging);
         model.addAttribute("order",order);
+        this.postService.updateViewCount(post);
         return "post_detail";
     }
     @PreAuthorize("isAuthenticated()")
