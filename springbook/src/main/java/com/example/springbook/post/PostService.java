@@ -1,5 +1,6 @@
 package com.example.springbook.post;
 
+import com.example.springbook.category.Category;
 import com.example.springbook.coment.Comment;
 import com.example.springbook.user.SiteUser;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +39,14 @@ public class PostService {
     }
 
     public void create(String subject, String content, SiteUser author){
+        //카테고리 분류 받아와야함
         Post post=new Post();
         post.setSubject(subject);
         post.setContent(content);
         post.setCreateDate(LocalDateTime.now());
         post.setAuthor(author);
         post.setViewCount(0L);
+        post.setCategory(new Category());
         this.postRepository.save(post);
     }
     public void modify(Post post,String subject,String content){
