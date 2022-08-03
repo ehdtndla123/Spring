@@ -38,7 +38,7 @@ public class PostService {
         return p.get();
     }
 
-    public void create(String subject, String content, SiteUser author){
+    public void create(String subject, String content, SiteUser author,Category category){
         //카테고리 분류 받아와야함
         Post post=new Post();
         post.setSubject(subject);
@@ -46,7 +46,7 @@ public class PostService {
         post.setCreateDate(LocalDateTime.now());
         post.setAuthor(author);
         post.setViewCount(0L);
-        post.setCategory(new Category());
+        post.setCategory(category);
         this.postRepository.save(post);
     }
     public void modify(Post post,String subject,String content){

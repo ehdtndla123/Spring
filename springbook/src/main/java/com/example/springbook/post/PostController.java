@@ -1,5 +1,7 @@
 package com.example.springbook.post;
 
+import com.example.springbook.category.Category;
+import com.example.springbook.category.CategoryService;
 import com.example.springbook.coment.Comment;
 import com.example.springbook.coment.CommentForm;
 import com.example.springbook.coment.CommentService;
@@ -28,13 +30,16 @@ public class PostController {
     private final UserService userService;
     private final CommentService commentService;
 
+    private final CategoryService categoryService;
 
     @RequestMapping("/list")
     public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page
     ,@RequestParam(value = "kw", defaultValue = "") String kw){
         Page<Post> paging=this.postService.getList(page,kw);
+        List<Category> categoryList=this.categoryService.getCategoryList();
         model.addAttribute("paging",paging);
         model.addAttribute("kw",kw);
+        model.addAttribute("categories",categoryList);
         return "post_list";
     }
     /*
@@ -59,7 +64,9 @@ public class PostController {
     }
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String postCreate(PostForm postForm){
+    public String postCreate(Model model,PostForm postForm){
+        List<Category> categoryList=this.categoryService.getCategoryList();
+        model.addAttribute("categories",categoryList);
         return "post_create_form";
     }
     @PreAuthorize("isAuthenticated()")
@@ -70,7 +77,8 @@ public class PostController {
         if(bindingResult.hasErrors()){
             return "post_create_form";
         }
-        this.postService.create(postForm.getSubject(),postForm.getContent(),user);
+        Category category=this.categoryService.getCategory(postForm.getCategoryName());
+        this.postService.create(postForm.getSubject(),postForm.getContent(),user,category);
         return "redirect:/dev/post/list";
     }
 

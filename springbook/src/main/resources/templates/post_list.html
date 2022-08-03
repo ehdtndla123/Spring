@@ -9,7 +9,13 @@
             <a class="btn btn-outline-dark">댓글순</a>
             <a class="btn btn-outline-dark">조회순</a>
         </div>
-
+        <div class="col-6">
+            <tr th:each="category: ${categories}">
+                <td>
+                    <a class="btn btn-primary" th:href="@{/}" th:text="${category.name}"></a>
+                </td>
+            </tr>
+        </div>
         <div class="col-6">
             <div class="input-group">
                 <input type="text" id="search_kw" class="form-control" th:value="${kw}">
@@ -69,10 +75,17 @@
             </li>
         </ul>
     </div>
+    <div>
+        <h1>임시로 카테고리 만드는 곳</h1>
+        <a th:href="@{/dev/category/create}" class="btn btn-primary">카테고리 만들기</a>
+
+    </div>
     <!-- 페이징처리 끝 -->
     <form th:action="@{/dev/post/list}" method="get" id="searchForm">
+        <input type="hidden" id="category" name="category" th:value="${category}">
         <input type="hidden" id="kw" name="kw" th:value="${kw}">
         <input type="hidden" id="page" name="page" th:value="${paging.number}">
+        <input type="hidden" id="order" name="older" th:value="${order}">
     </form>
 </div>
 <script layout:fragment="script" type='text/javascript'>
