@@ -19,5 +19,5 @@ public class PostForm {
     private String content;
 
     @NotEmpty(message = "카테고리는 필수항목입니다.")
-    private String categoryName;
+    private String categoryId;
 }

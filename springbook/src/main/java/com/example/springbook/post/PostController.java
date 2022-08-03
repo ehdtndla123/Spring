@@ -34,8 +34,8 @@ public class PostController {
 
     @RequestMapping("/list")
     public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page
-    ,@RequestParam(value = "kw", defaultValue = "") String kw){
-        Page<Post> paging=this.postService.getList(page,kw);
+    ,@RequestParam(value = "kw", defaultValue = "") String kw,@RequestParam(value="category",defaultValue = "모든게시판")String category){
+        Page<Post> paging=this.postService.getList(page,kw,category);
         List<Category> categoryList=this.categoryService.getCategoryList();
         model.addAttribute("paging",paging);
         model.addAttribute("kw",kw);
@@ -77,8 +77,8 @@ public class PostController {
         if(bindingResult.hasErrors()){
             return "post_create_form";
         }
-        Category category=this.categoryService.getCategory(postForm.getCategoryName());
-        this.postService.create(postForm.getSubject(),postForm.getContent(),user,category);
+        Category category=this.categoryService.getCategory(postForm.getCategoryId());
+        this.postService.create(postForm.getSubject(),postForm.getContent(),user, category.getId());
         return "redirect:/dev/post/list";
     }
 

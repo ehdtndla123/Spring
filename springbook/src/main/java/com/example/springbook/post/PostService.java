@@ -1,6 +1,7 @@
 package com.example.springbook.post;
 
 import com.example.springbook.category.Category;
+import com.example.springbook.category.CategoryService;
 import com.example.springbook.coment.Comment;
 import com.example.springbook.user.SiteUser;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +24,12 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
 
-    public Page<Post> getList(int page,String kw){
+    private final CategoryService categoryService;
+    public Page<Post> getList(int page,String kw,String category){
         List<Sort.Order> list=new ArrayList<>();
         list.add(Sort.Order.desc("createDate"));
         Pageable pageable= PageRequest.of(page,10,Sort.by(list));
-        Specification<Post> spec=search(kw);
+        Specification<Post> spec=search(kw,category);
         return this.postRepository.findAll(spec,pageable);
     }
 
@@ -38,15 +41,17 @@ public class PostService {
         return p.get();
     }
 
-    public void create(String subject, String content, SiteUser author,Category category){
+    public void create(String subject, String content, SiteUser author,Integer categoryId){
         //카테고리 분류 받아와야함
+        Category newCategory=this.categoryService.getCategory(categoryId);
         Post post=new Post();
         post.setSubject(subject);
         post.setContent(content);
         post.setCreateDate(LocalDateTime.now());
         post.setAuthor(author);
         post.setViewCount(0L);
-        post.setCategory(category);
+        post.setCategory(newCategory);
+        newCategory.getPostList().add(post);
         this.postRepository.save(post);
     }
     public void modify(Post post,String subject,String content){
@@ -68,20 +73,24 @@ public class PostService {
         }
         this.postRepository.save(post);
     }
-    private Specification<Post> search(String kw) {
+    private Specification<Post> search(String kw,String category) {
         return new Specification<>() {
             private static final long serialVersionUID = 1L;
             @Override
             public Predicate toPredicate(Root<Post> p, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 query.distinct(true);  // 중복을 제거
+                Join<Category,Post> c=p.join("category",JoinType.LEFT);
                 Join<Post, SiteUser> u1 = p.join("author", JoinType.LEFT);
                 Join<Post, Comment> a = p.join("commentList", JoinType.LEFT);
                 Join<Comment, SiteUser> u2 = a.join("author", JoinType.LEFT);
-                return cb.or(cb.like(p.get("subject"), "%" + kw + "%"), // 제목
+                return cb.and(cb.like(c.get("name"),category),
+
+                        cb.or(cb.like(p.get("subject"), "%" + kw + "%"), // 제목
                         cb.like(p.get("content"), "%" + kw + "%"),      // 내용
                         cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자
                         cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용
-                        cb.like(u2.get("username"), "%" + kw + "%"));   // 답변 작성자
+                        cb.like(u2.get("username"), "%" + kw + "%")));// 답변 작성자
+
             }
         };
     }
