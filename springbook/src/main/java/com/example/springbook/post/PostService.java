@@ -25,9 +25,17 @@ public class PostService {
     private final PostRepository postRepository;
 
     private final CategoryService categoryService;
-    public Page<Post> getList(int page,String kw,String category){
+    public Page<Post> getList(int page,String kw,String category,String order){
         List<Sort.Order> list=new ArrayList<>();
-        list.add(Sort.Order.desc("createDate"));
+        if(order.equals("vote")){
+            list.add(Sort.Order.desc("voteCount"));
+        }else if(order.equals("note")){
+            list.add(Sort.Order.desc("commentCount"));
+        }else if(order.equals("view")){
+            list.add(Sort.Order.desc("viewCount"));
+        }else{
+            list.add(Sort.Order.desc("createDate"));
+        }
         Pageable pageable= PageRequest.of(page,10,Sort.by(list));
         Specification<Post> spec=search(kw,category);
         return this.postRepository.findAll(spec,pageable);

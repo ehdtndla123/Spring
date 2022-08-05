@@ -43,4 +43,5 @@ public class Post {
 
     @ManyToOne
     private Category category;
+
 }

@@ -4,15 +4,15 @@
     <div class="row my-3">
         <div class="col-6">
             <a th:href="@{/dev/post/create}" class="btn btn-primary">질문 등록하기</a>
-            <a class="btn btn-outline-dark">최신순</a>
-            <a class="btn btn-outline-dark">추천순</a>
-            <a class="btn btn-outline-dark">댓글순</a>
-            <a class="btn btn-outline-dark">조회순</a>
+            <a class="page-order"  href="javascript:void(0)"  th:data-order="id">최신순</a>
+            <a class="page-order"  href="javascript:void(0)"  th:data-order="vote">추천순</a>
+            <a class="page-order"  href="javascript:void(0)"  th:data-order="note">댓글순</a>
+            <a class="page-order"  href="javascript:void(0)"  th:data-order="view">조회순</a>
         </div>
         <div class="col-6">
             <tr th:each="categorya,loop: ${categories}">
                 <td>
-                    <a th:text="${categorya.name}" id="search_category"class="page-category" href="javascript:void(0)" th:data-category="${categorya.name}" th:value="${categorya.name}"></a>
+                    <a th:text="${categorya.name}" class="page-category" href="javascript:void(0)" th:data-category="${categorya.name}" ></a>
                 </td>
             </tr>
         </div>
@@ -85,7 +85,7 @@
         <input type="hidden" id="categoryName" name="categoryName" th:value="${categoryName}">
         <input type="hidden" id="kw" name="kw" th:value="${kw}">
         <input type="hidden" id="page" name="page" th:value="${paging.number}">
-        <input type="hidden" id="order" name="older" th:value="${order}">
+        <input type="hidden" id="order" name="order" th:value="${order}">
     </form>
 </div>
 <script layout:fragment="script" type='text/javascript'>
@@ -104,8 +104,18 @@
             document.getElementById('page').value=0;
             document.getElementById('kw').value="";
             document.getElementById('categoryName').value=this.dataset.category;
+            document.getElementById('order').value="id";
             document.getElementById('searchForm').submit();
         });
+    });
+    const order_elements=document.getElementsByClassName("page-order");
+    Array.from(order_elements).forEach(function(element){
+       element.addEventListener('click',function(){
+          document.getElementById('page').value=0;
+          document.getElementById('kw').value="";
+          document.getElementById('order').value=this.dataset.order;
+          document.getElementById('searchForm').submit();
+       });
     });
     const btn_search = document.getElementById("btn_search");
     btn_search.addEventListener('click', function() {

@@ -34,13 +34,15 @@ public class PostController {
 
     @RequestMapping("/list")
     public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page
-    ,@RequestParam(value = "kw", defaultValue = "") String kw,@RequestParam(value="categoryName",defaultValue = "모든게시판")String categoryName){
-        Page<Post> paging=this.postService.getList(page,kw,categoryName);
+    ,@RequestParam(value = "kw", defaultValue = "") String kw,@RequestParam(value="categoryName",defaultValue = "모든게시판")String categoryName,
+                       @RequestParam(value="order",defaultValue = "id")String order){
+        Page<Post> paging=this.postService.getList(page,kw,categoryName,order);
         List<Category> categoryList=this.categoryService.getCategoryList();
         model.addAttribute("paging",paging);
         model.addAttribute("kw",kw);
         model.addAttribute("categories",categoryList);
         model.addAttribute("categoryName",categoryName);
+        model.addAttribute("order",order);
         return "post_list";
     }
     /*
