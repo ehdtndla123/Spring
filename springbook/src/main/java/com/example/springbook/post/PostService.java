@@ -30,9 +30,9 @@ public class PostService {
         if(order.equals("vote")){
             list.add(Sort.Order.desc("voteCount"));
         }else if(order.equals("note")){
-            list.add(Sort.Order.desc("commentCount"));
+        //    list.add(Sort.Order.desc(""));
         }else if(order.equals("view")){
-            list.add(Sort.Order.desc("viewCount"));
+        //    list.add(Sort.Order.desc(""));
         }else{
             list.add(Sort.Order.desc("createDate"));
         }
